@@ -1,0 +1,32 @@
+df <- read.csv("C:/Users/Nelson/Desktop/Curso Machine Learning/AFPCrecer/CursoEstudio/12) Regresion Logistica/Ejercicios/DataMigracionesCSV_V20190503.csv")
+str(df)
+table(df$migradoacrecer)
+
+head(df)
+
+df$migradoacrecer <- as.factor(df$migradoacrecer)
+
+
+set.seed(100)
+trainDataIndex <- createDataPartition(df$migradoacrecer, p=0.7, list = F)
+trainData <- df[trainDataIndex, ]
+testData <- df[-trainDataIndex, ]
+
+
+logitmod <- glm(migradoacrecer ~ edadcliente+llamadas+visitas+ingresos+cantidadhijos+saldoenbancos+aniostrabajandoempresaactual,data=trainData,family="binomial")
+
+summary(logitmod)
+
+pred <- predict(logitmod, newdata = testData, type = "response")
+pred
+
+y_pred_num <- ifelse(pred > 0.5, 1, 0)
+y_pred <- factor(y_pred_num, levels=c(0, 1))
+y_act <- testData$migradoacrecer
+
+
+MC  <- table(y_act,y_pred)
+MC
+
+# Accuracy
+mean(y_pred == y_act)
